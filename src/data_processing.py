@@ -14,8 +14,7 @@ def extract_texts_from_file(path: Path) -> List[Dict]:
         language = doc_id.split("_")[1][:2]
         parti = doc.find(".//PARTI")
         nom_parti = parti.get("valeur")
-        for text in doc.findall("texte"):
-            paragraphs = [p.text for p in text.findall("p")]
+        paragraphs = [p.text for p in doc.findall(".//p")]
         docs.append(
             {
                 "id": doc_id,
