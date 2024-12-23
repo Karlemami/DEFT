@@ -35,7 +35,3 @@ def convert_corpus_to_dataframe(
     for f in directory.glob("*.xml"):
         docs.extend(extract_texts_from_file(f))
     return pd.DataFrame(docs)
-
-
-data = convert_corpus_to_dataframe()
-print(data.head())
