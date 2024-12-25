@@ -49,7 +49,7 @@ def convert_corpus_to_dataframe(
     test_path: str = "../data/deft09_parlement_test",
 ) -> pd.DataFrame:
     """
-    Renvoie le corpus (train et test) en dataframe avec le colonnes (id: str, language: str, paragraphs[list[str]], split: str, y: str)
+    Renvoie le corpus (train et test) en dataframe avec les colonnes (id: str, language: str, paragraphs[list[str]], split: str, y: str)
     """
     train_directory = Path(train_path)
     test_dictory = Path(test_path)
@@ -61,7 +61,7 @@ def convert_corpus_to_dataframe(
 
 def get_train_test(df: pd.DataFrame = convert_corpus_to_dataframe()) -> tuple[pd.Series]:
     """
-    Renvoie le tuple (X_train, X_test, y_train, y_test)
+    Renvoie le tuple (X_train: list[list[str]], X_test: list[list[str]], y_train: list[str] , y_test: list[str])
     """
     X_train = df["paragraphs"][df["split"]=="train"]
     X_test = df["paragraphs"][df["split"]=="test"]
