@@ -59,15 +59,13 @@ def convert_corpus_to_dataframe(
         df = pd.concat([df, extract_texts_from_file(f)])
     return df
 
-def get_train_test(corpus: pd.DataFrame = convert_corpus_to_dataframe()) -> tuple[list[str]]:
+def get_train_test(df: pd.DataFrame = convert_corpus_to_dataframe()) -> tuple[pd.Series]:
     """
     Renvoie le tuple (X_train, X_test, y_train, y_test)
     """
-    df = convert_corpus_to_dataframe()
     X_train = df["paragraphs"][df["split"]=="train"]
     X_test = df["paragraphs"][df["split"]=="test"]
     y_train = df["y"][df["split"]=="train"]
     y_test = df["y"][df["split"]=="test"]
 
     return X_train, X_test, y_train, y_test
-
