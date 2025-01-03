@@ -1,35 +1,32 @@
-import pandas as pd
-import numpy as np
-import json
-import argparse
-from classification.Classifier import Classifier
 from classification.Trainer import Trainer
 from preprocessing.DataLoader import DataLoader
-from preprocessing.parse_data import convert_corpus_to_dataframe, get_train_test
+from load_config import load_config
+from utils.Colors import colors
+import warnings
 
 
-SAVED_MODELS_PATH = "saved_models"
-TRAIN_PATH = "data/deft09_parlement_appr"
-TEST_PATH = "data/deft09_parlement_test"
-LANGUAGE = "fr"
-
-
-def main():
-    loader = DataLoader(TRAIN_PATH, TEST_PATH, LANGUAGE)
-    df = loader.df_unique
-    print(df)
-
-    X_train, X_test, y_train, y_test = loader.get_train_test_vectorized()
-    # print(X_train, X_test, y_train, y_test)
-    labels = sorted(set(df["y"]))
-    print(labels)
-
-    # vectorizer_path = f"{SAVED_MODELS_PATH}/tfidf_vectorizer.joblib"
-    # X = vectorize(df, vectorizer_path)
-    trainer = Trainer(["LR", "RFC"], X_train, X_test, y_train, y_test, labels, LANGUAGE)
-    # trainer.get_best_params(save=True)
-    trainer.compare_results(save_results=True, defined=True, save_best=False)
+def main(config: dict):
+    for language in config["languages"]:
+        print(
+            f"{colors.bold}{colors.red}\n\nCurrently training on {language}...{colors.reset}"
+        )
+        loader = DataLoader(config["train_path"], config["test_path"], language)
+        X_train, X_test, y_train, y_test = loader.get_train_test_vectorized()
+        labels = sorted(set(loader.df["y"]))
+        trainer = Trainer(
+            config["models"], X_train, X_test, y_train, y_test, labels, language
+        )
+        # trainer.get_best_params(save=True)
+        trainer.compare_results(save_results=True, defined=False, save_best=False)
 
 
 if __name__ == "__main__":
-    main()
+    warnings.filterwarnings("ignore")
+    config = load_config()
+    print(
+        f"{colors.bold}{colors.green}Train path:{colors.reset} {config['train_path']}"
+    )
+    print(f"{colors.bold}{colors.green}Test path:{colors.reset} {config['test_path']}")
+    print(f"{colors.bold}{colors.green}Languages:{colors.reset} {config['languages']}")
+    print(f"{colors.bold}{colors.green}Models:{colors.reset} {config['models']}")
+    main(config)

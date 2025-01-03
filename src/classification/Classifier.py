@@ -296,7 +296,7 @@ class Classifier:
             str: The classification report.
         """
         report = classification_report(self.y_test, y_hat)
-        print(report)
+        # print(report)
         if save:
             os.makedirs(f"results/{self.type}", exist_ok=True)
             with open(

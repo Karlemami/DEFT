@@ -4,6 +4,7 @@ from collections import namedtuple
 import json
 import joblib
 from classification.Classifier import Classifier
+from utils.Colors import colors
 
 Metrics = namedtuple("Metrics", ["accuracy", "f1score"])
 
@@ -66,7 +67,7 @@ class Trainer:
         """
         overall_results = {}
         for model in self.models:
-            print(f"Currently training {model}...")
+            print(f"\t{colors.blue}Currently training {model}...{colors.reset}")
             metrics = self.train_single_classifier(
                 model, defined=defined, save_results=save_results
             )

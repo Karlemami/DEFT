@@ -14,7 +14,7 @@ venv: $(VENV)/bin/activate
 run: venv
 	@$(PYTHON) $(SRC_DIR)/main.py
 
-pretty:
+fmt:
 	@black $(SRC_DIR)
 
 clean:

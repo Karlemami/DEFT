@@ -1,0 +1,14 @@
+train_path: "data/deft09_parlement_appr"
+test_path: "data/deft09_parlement_test"
+
+languages:
+  - "fr"  # French
+  - "en"  # English
+  - "it"  # Italian
+
+models:
+  # - "RFC"          # Random Forest Classifier
+  # - "SVM"          # Support Vector Machine
+  - "LR"           # Logistic Regression
+  - "Perceptron"   # Perceptron Algorithm
+
