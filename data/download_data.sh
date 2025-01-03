@@ -16,3 +16,7 @@ tar -xzf deft09_parlement_ref.tar.gz -C deft09_parlement_ref
 rm deft09_parlement_appr.xml.tar.gz
 rm deft09_parlement_test.xml.tar.gz
 rm deft09_parlement_ref.tar.gz
+
+mv deft09_parlement_appr data/deft09_parlement_appr
+mv deft09_parlement_test data/deft09_parlement_test
+mv deft09_parlement_ref data/deft09_parlement_ref
