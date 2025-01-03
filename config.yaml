@@ -7,8 +7,9 @@ languages:
   - "it"  # Italian
 
 models:
-  # - "RFC"          # Random Forest Classifier
-  # - "SVM"          # Support Vector Machine
+  - "RFC"          # Random Forest Classifier
+  - "SVM"          # Support Vector Machine
   - "LR"           # Logistic Regression
   - "Perceptron"   # Perceptron Algorithm
 
+drop_duplicates: true

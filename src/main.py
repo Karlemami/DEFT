@@ -11,7 +11,9 @@ def main(config: dict):
             f"{colors.bold}{colors.red}\n\nCurrently training on {language}...{colors.reset}"
         )
         loader = DataLoader(config["train_path"], config["test_path"], language)
-        X_train, X_test, y_train, y_test = loader.get_train_test_vectorized()
+        X_train, X_test, y_train, y_test = loader.get_train_test_vectorized(
+            drop_duplicates=config["drop_duplicates"]
+        )
         labels = sorted(set(loader.df["y"]))
         trainer = Trainer(
             config["models"], X_train, X_test, y_train, y_test, labels, language
@@ -29,4 +31,7 @@ if __name__ == "__main__":
     print(f"{colors.bold}{colors.green}Test path:{colors.reset} {config['test_path']}")
     print(f"{colors.bold}{colors.green}Languages:{colors.reset} {config['languages']}")
     print(f"{colors.bold}{colors.green}Models:{colors.reset} {config['models']}")
+    print(
+        f"{colors.bold}{colors.green}Drop duplicates:{colors.reset} {config['drop_duplicates']}"
+    )
     main(config)
