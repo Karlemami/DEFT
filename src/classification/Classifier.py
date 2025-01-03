@@ -39,7 +39,7 @@ class Classifier:
             __scoring (str): The scoring metric to use during GridSearchCV (default: "accuracy").
     """
 
-    def __init__(self, type: str, X_train, X_test, y_train, y_test, labels):
+    def __init__(self, type: str, X_train, X_test, y_train, y_test, labels, language):
         self.type = type
         self.X_train = X_train
         self.X_test = X_test
@@ -55,6 +55,7 @@ class Classifier:
             "LR": self.__gridSearch_LR,
         }
         self.__scoring = "accuracy"
+        self.language = language
 
     def gridSearch(self, save=False) -> tuple:
         """
@@ -80,8 +81,8 @@ class Classifier:
         )
         if save:
             print(best_params)
-            os.makedirs("best_params", exist_ok=True)
-            with open(f"best_params/{self.type}.json", "w") as outf:
+            os.makedirs(f"best_params/{self.language}", exist_ok=True)
+            with open(f"best_params/{self.type}_{self.language}.json", "w") as outf:
                 json.dump(best_params, outf)
         return best_params, scores
 
@@ -222,14 +223,16 @@ class Classifier:
         else:
             raise ValueError(f"Unsupported classifier type: {self.type}")
         clf.fit(self.X_train, self.y_train)
-        os.makedirs("saved_models", exist_ok=True)
+        os.makedirs(f"saved_models/{self.language}", exist_ok=True)
         joblib.dump(clf, f"saved_models/{self.type}_best.joblib")
         metadata = {
             "type": self.type,
             "best_params": best_params,
             "labels": self.labels,
         }
-        with open(f"saved_models/{self.type}_metadata.json", "w") as outf:
+        with open(
+            f"saved_models/{self.language}/{self.type}_metadata.json", "w"
+        ) as outf:
             json.dump(metadata, outf)
 
     def get_confusionMatrix(self, y_hat) -> np.ndarray:
@@ -276,7 +279,7 @@ class Classifier:
             plt.show()
         if save:
             os.makedirs(f"results/{self.type}", exist_ok=True)
-            plt.savefig(f"results/{self.type}/confusion_matrix.png")
+            plt.savefig(f"results/{self.type}/confusion_matrix_{self.language}.png")
         return confMatrix
 
     def get_classificationReport(self, y_hat, save=False) -> str:
@@ -296,6 +299,8 @@ class Classifier:
         print(report)
         if save:
             os.makedirs(f"results/{self.type}", exist_ok=True)
-            with open(f"results/{self.type}/classification_report.txt", "w") as outf:
+            with open(
+                f"results/{self.type}/classification_report_{self.language}.txt", "w"
+            ) as outf:
                 outf.write(str(report))
         return str(report)

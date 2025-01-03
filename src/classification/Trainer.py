@@ -33,6 +33,7 @@ class Trainer:
         y_train: np.ndarray,
         y_test,
         labels: list,
+        language: str,
     ):
         self.models = models
         self.X_train = X_train
@@ -40,6 +41,7 @@ class Trainer:
         self.y_train = y_train
         self.y_test = y_test
         self.labels = labels
+        self.language = language
 
     def compare_results(
         self, defined=False, save_results=True, save_best=True, table=True
@@ -95,10 +97,16 @@ class Trainer:
             A namedtuple containing the accuracy and F1-score of the model.
         """
         clf = Classifier(
-            type, self.X_train, self.X_test, self.y_train, self.y_test, self.labels
+            type,
+            self.X_train,
+            self.X_test,
+            self.y_train,
+            self.y_test,
+            self.labels,
+            self.language,
         )
         if defined:
-            with open(f"best_params/{type}.json", "r") as inf:
+            with open(f"best_params/{self.language}/{type}.json", "r") as inf:
                 best_params = json.load(inf)
         else:
             best_params = None
@@ -145,7 +153,13 @@ class Trainer:
         for model in self.models:
             print(f"Currently training {model}:")
             clf = Classifier(
-                model, self.X_train, self.X_test, self.y_train, self.y_test, self.labels
+                model,
+                self.X_train,
+                self.X_test,
+                self.y_train,
+                self.y_test,
+                self.labels,
+                language=self.language,
             )
             best_params, results = clf.gridSearch(save=True)
             print(f"Best params: {best_params}")
@@ -183,7 +197,8 @@ class Trainer:
             self.y_train,
             self.y_test,
             self.labels,
+            self.language,
         )
-        with open(f"best_params/{best_model_type}.json", "r") as inf:
+        with open(f"best_params/{self.language}/{best_model_type}.json", "r") as inf:
             best_params = json.load(inf)
         clf.save_model(best_params=best_params)

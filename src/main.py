@@ -17,19 +17,18 @@ LANGUAGE = "fr"
 def main():
     loader = DataLoader(TRAIN_PATH, TEST_PATH, LANGUAGE)
     df = loader.df_unique
-    print(f"NORMAL DF:{loader.df}")
-    print(f"DROP DUPLICATES:")
     print(df)
 
     X_train, X_test, y_train, y_test = loader.get_train_test_vectorized()
     # print(X_train, X_test, y_train, y_test)
     labels = sorted(set(df["y"]))
+    print(labels)
 
     # vectorizer_path = f"{SAVED_MODELS_PATH}/tfidf_vectorizer.joblib"
     # X = vectorize(df, vectorizer_path)
-    trainer = Trainer(["LR", "RFC"], X_train, X_test, y_train, y_test, labels)
+    trainer = Trainer(["LR", "RFC"], X_train, X_test, y_train, y_test, labels, LANGUAGE)
     # trainer.get_best_params(save=True)
-    # trainer.compare_results(save_results=True, defined=True, save_best=False)
+    trainer.compare_results(save_results=True, defined=True, save_best=False)
 
 
 if __name__ == "__main__":
