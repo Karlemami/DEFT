@@ -5,7 +5,7 @@ from pathlib import Path
 
 def extract_test_y(language) -> list[str]:
     lines = open(
-        f"../data/deft09_parlement_ref/deft09_parlement_ref_{language}.txt"
+        f"data/deft09_parlement_ref/deft09_parlement_ref_{language}.txt"
     ).readlines()
     return [line.split("\t")[-1].strip() for line in lines]
 
@@ -50,8 +50,8 @@ def extract_texts_from_file(path: Path) -> list[dict]:
 
 
 def convert_corpus_to_dataframe(
-    train_path: str = "../data/deft09_parlement_appr",
-    test_path: str = "../data/deft09_parlement_test",
+    train_path: str = "data/deft09_parlement_appr",
+    test_path: str = "data/deft09_parlement_test",
 ) -> pd.DataFrame:
     """
     Renvoie le corpus (train et test) en dataframe avec les colonnes (id: str, language: str, paragraphs[list[str]], split: str, y: str)
@@ -77,3 +77,14 @@ def get_train_test(
     y_test = df["y"][df["split"] == "test"]
 
     return X_train, X_test, y_train, y_test
+
+
+def main():
+    df = convert_corpus_to_dataframe()
+    print(df)
+    train_test = get_train_test(df)
+    print(train_test)
+
+
+if __name__ == "__main__":
+    main()
