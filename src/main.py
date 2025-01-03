@@ -9,15 +9,22 @@ from preprocessing.parse_data import convert_corpus_to_dataframe, get_train_test
 
 
 SAVED_MODELS_PATH = "saved_models"
+TRAIN_PATH = "data/deft09_parlement_appr"
+TEST_PATH = "data/deft09_parlement_test"
+LANGUAGE = "fr"
 
 
 def main():
-    # loader = DataLoader()
-    df = convert_corpus_to_dataframe()
+    loader = DataLoader(TRAIN_PATH, TEST_PATH, LANGUAGE)
+    df = loader.df
+    print(df)
+    X_train, X_test, y_train, y_test = loader.get_train_test_vectorized()
+    print(X_train, X_test, y_train, y_test)
     labels = sorted(set(df["y"]))
-    vectorizer_path = f"{SAVED_MODELS_PATH}/tfidf_vectorizer.joblib"
-    X = vectorize(df, vectorizer_path)
-    trainer = Trainer(["LR", "RFC"], X, np.array(df["y"]), labels)
+
+    # vectorizer_path = f"{SAVED_MODELS_PATH}/tfidf_vectorizer.joblib"
+    # X = vectorize(df, vectorizer_path)
+    trainer = Trainer(["LR", "RFC"], X_train, X_test, y_train, y_test, labels)
     trainer.compare_results(save_results=True, defined=True, save_best=False)
 
 

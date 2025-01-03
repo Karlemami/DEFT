@@ -25,10 +25,12 @@ class Trainer:
         A list of class labels used in classification.
     """
 
-    def __init__(self, models: list, X: np.ndarray, y: np.ndarray, labels: list):
+    def __init__(self, models: list, X_train: np.ndarray, X_test, y_train: np.ndarray, y_test, labels: list):
         self.models = models
-        self.X = X
-        self.y = y
+        self.X_train = X_train
+        self.X_test = X_test
+        self.y_train = y_train
+        self.y_test = y_test
         self.labels = labels
 
     def compare_results(
