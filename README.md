@@ -2,7 +2,7 @@
 
 ## Installation
 
-```
+```sh
 git clone git@github.com:Karlemami/DEFT.git && make
 ```
 
@@ -10,7 +10,7 @@ git clone git@github.com:Karlemami/DEFT.git && make
 
 You can update `config.yaml` as follows:
 
-```
+```yaml
 train_path: "data/deft09_parlement_appr"
 test_path: "data/deft09_parlement_test"
 
@@ -30,7 +30,7 @@ drop_duplicates: true
 
 ## Usage
 
-```
+```sh
 make run
 make clean
 ```
