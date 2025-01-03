@@ -39,10 +39,12 @@ class Classifier:
             __scoring (str): The scoring metric to use during GridSearchCV (default: "accuracy").
     """
 
-    def __init__(self, type: str, X, y, labels):
+    def __init__(self, type: str, X_train, X_test, y_train, y_test, labels):
         self.type = type
-        self.X = X
-        self.y = y
+        self.X_train = X_train
+        self.X_test = X_test
+        self.y_train = y_train
+        self.y_test = y_test
         self.labels = labels
         self.accuracy = 0.0
         self.f1_score = 0.0
@@ -67,7 +69,11 @@ class Classifier:
             tuple: A tuple containing the best hyperparameters (dict) and a tuple of train score (float).
         """
         X_train, X_test, y_train, y_test = train_test_split(
-            self.X, self.y, test_size=0.3, random_state=42, stratify=self.y
+            self.X_train,
+            self.y_train,
+            test_size=0.3,
+            random_state=42,
+            stratify=self.y_train,
         )
         best_params, scores = self.__gridSearch_methods[self.type](
             X_train, X_test, y_train, y_test
@@ -169,36 +175,10 @@ class Classifier:
             )
         else:
             raise ValueError(f"Unsupported classifier type: {self.type}")
-        # Example of using threshold for out of scope category commented below:
-        # if len(self.labels) != 9:
-        #     y_hat = self.__perform_threshold_classif(clf)
-        y_hat = cross_val_predict(clf, self.X, self.y, cv=cv)
-        self.accuracy = accuracy_score(self.y, y_hat)
-        self.f1_score = f1_score(self.y, y_hat, average="macro")
-        return y_hat
-
-    def __perform_threshold_classif(self, clf) -> np.ndarray:
-        """
-        More exprimental part for `out of scope` class.
-        TODO:
-        - improve threshold selection
-        - using it implies changing the training dataset by reducing the number of categories since out of scope would be a separated category.
-        """
-        predicted_probs = cross_val_predict(
-            clf, self.X, self.y, cv=cv, method="predict_proba"
-        )
-        y_hat = []
-        threshold = np.mean([max(prob) for prob in predicted_probs])
-        print(f"THRESHOLD = {threshold}")
-        print(predicted_probs)
-        for prob in predicted_probs:
-            predicted_class = np.argmax(prob)
-            max_prob = max(prob)
-            if max_prob < threshold:
-                y_hat.append(5)
-            else:
-                y_hat.append(predicted_class)
-        y_hat = np.array(y_hat)
+        clf.fit(self.X_train, self.y_train)
+        y_hat = clf.predict(self.X_test)
+        self.accuracy = accuracy_score(self.y_test, y_hat)
+        self.f1_score = f1_score(self.y_test, y_hat, average="macro")
         return y_hat
 
     def save_model(self, best_params=None):
@@ -241,7 +221,7 @@ class Classifier:
             )
         else:
             raise ValueError(f"Unsupported classifier type: {self.type}")
-        clf.fit(self.X, self.y)
+        clf.fit(self.X_train, self.y_train)
         os.makedirs("saved_models", exist_ok=True)
         joblib.dump(clf, f"saved_models/{self.type}_best.joblib")
         metadata = {
@@ -264,7 +244,7 @@ class Classifier:
         -------
             np.ndarray: Confusion matrix.
         """
-        return confusion_matrix(self.y, y_hat)
+        return confusion_matrix(self.y_test, y_hat)
 
     def get_and_plot_confusionMatrix(
         self, y_hat, save=False, display=True
@@ -312,7 +292,7 @@ class Classifier:
         -------
             str: The classification report.
         """
-        report = classification_report(self.y, y_hat)
+        report = classification_report(self.y_test, y_hat)
         print(report)
         if save:
             os.makedirs(f"results/{self.type}", exist_ok=True)

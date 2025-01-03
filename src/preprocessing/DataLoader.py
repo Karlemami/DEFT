@@ -8,7 +8,10 @@ import joblib
 class DataLoader:
     def __init__(self, train_path, test_path, language):
         full_df = DataLoader.convert_corpus_to_dataframe(train_path, test_path)
-        self.df = full_df.query("`language` == @language")
+        self.df = full_df.query("`language` == @language").reset_index(drop=True)
+        self.df_unique = self.df.drop_duplicates(subset="paragraphs").reset_index(
+            drop=True
+        )
         self.language = language
 
     @staticmethod
