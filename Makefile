@@ -24,4 +24,4 @@ clean:
 	@find . -type f -name '*.pyc' -delete
 	@echo "Project cleaned!"
 
-.PHONY: all venv run pretty clean
+.PHONY: all venv run fmt clean
