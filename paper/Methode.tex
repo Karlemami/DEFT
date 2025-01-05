@@ -3,9 +3,6 @@
 \subsection{Dataset}
 
 Nous utilisons le dataset fournit pour la tâche 3 de l’édition 2009 de DEFT.
-Il s'agit d'un corpus multilingue de débats parlementaires européens. Chaque intervention
-parlementaire est classée en fonction du parti \footnote {ELDR, PPE-DE, PSE, GUE-NGL et Verts-ALE}
-du locuteur et présente dans le corpus dans 3 langues : anglais, français et italien.\\
 Au moment de faire des statistiques descriptives, nous nous sommes rendus comptes 
 que le corpus présentait des doublons, et ce majoritairement dans la partition test.
 \begin{figure}[ht]
@@ -51,13 +48,13 @@ Max & 6858.0 & 1803.0\\ \hline
 Le texte des interventions a été soumis à un prétraitement simple :\\
 \indent(1) Suppresion de la ponctuation\\
 \indent(2) Unification de la casse en minuscules\\
-\indent(3) Tokenisation\footnote {Une lemmatisation avec la bibliothèque SpaCy a été envisagée,
+\indent(3) Tokenisation\footnote {Une lemmatisation avec la bibliothèque \texttt{SpaCy} a été envisagée,
 mais ce corpus multilingue aurait nécessité le chargement de 3 modèles linguistiques
 différents et ralongé d'autant le temps de traitement}
 \\
 Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le 
 \textit{downsampling} afin d'obtenir des classes relativement équilibrées,
-en utilisant la fonction \textit{resample} de la bibliothèque Sckit-learn. Après \textit{downsampling},
+en utilisant la fonction \textit{resample} de la bibliothèque \texttt{sckit-learn}. Après \textit{downsampling},
 les classes PPE-DE et PSE ne représentent plus que 43\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
 
 \begin{table}[ht]
@@ -80,19 +77,19 @@ Total & 15727 & 3235\\ \hline
 \subsection{Les différents embeddings testés}
 Nous avons choisi dans notre étude de comparer les résultats obtenus sur une tâche 
 de classification en utilisant 3 techniques de vectorisation différentes.\\
-\indent La vectorisation TF-IDF\footnote{Implémentée avec la fonction tfidfvectorizer de Scikit-learn} bibliothèque (\textit{Term Frequency-Inverse Document Frequency})
+\indent La vectorisation \texttt{TF-IDF}\footnote{Implémentée avec la fonction \texttt{tfidfvectorizer} de \texttt{scikit-learn}}(\textit{Term Frequency-Inverse Document Frequency})
 est la méthode la plus "ancienne" que nous présentons. Elle se base sur une mécanique de comptage des mots:
 la fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
 permettant de donner plus d'importance aux mots significatifs dans leurs documents d'apparition.\\
-\indent La vectorisation Doc2Vec une une vectorisation de document plutot que de mot. Ces vecteurs sont
-l'ouput d'un réseau de neurones et nécessite donc une phrase d'entrainement. Pour cette étude,
+\indent La vectorisation \texttt{Doc2Vec}\footnote{Implémentée à l'aide de la bibliothèque \texttt{gensim}} qui génère des vecteurs de de document plutôt que de mot. Ces vecteurs sont
+l'ouput d'un réseau de neurones et nécessitent donc une phrase d'entrainement. Pour cette étude,
 nous avons choisi de générer des vecteur Doc2Vec à 100 dimensions\footnote{il serait possible de faire plus, mais nous essayions de ne pas saturer nos machines}
 avec une fenêtre glissante de 5 mots et d'ignorer les mots n'apparaissant pas au moins 3 fois.\\
-\indent La vectorisation avec BERT. Ce modèle basé sur les réseaux de neurones s'appuie sur une 
+\indent La vectorisation avec \texttt{BERT} multilingue\footnote{bert-base-multilingual-uncased} qui se base sur les réseaux de neurones mais s'appuie sur une 
 architecture transformer et nécessite également une phase d'entrainement. Contrairement à
 Doc2Vec, elle renvoie des vecteurs de mots, et utilise un mécanisme d'attention lors de
 la génération des vecteurs, lui permettant de prendre en compte l'importance d'un mot en fonction du contexte local dans
-lequel in apparait.
+lequel in apparait. Nous avons généré des vecteurs à 768 dimensions (valeur de base).
 
 
 
