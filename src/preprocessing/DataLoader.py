@@ -109,7 +109,7 @@ class DataLoader:
         if self.language == "en":
             max_length = 380  
         else:
-            max_length = 660
+            max_length = 512
 
         batch_size = 32
         embeddings = []
