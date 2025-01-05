@@ -109,7 +109,7 @@ class DataLoader:
         if self.language == "en":
             max_length = 380  
         else:
-            max_length = 128
+            max_length = 660
 
         batch_size = 32
         embeddings = []
@@ -138,9 +138,9 @@ class DataLoader:
     def get_train_test_vectorized(self, vectorizer: str,downsample=True) -> tuple[pd.Series]:
         if downsample:
             for i in range(2):
-                df = self.get_downsampled()
-        else:
-            df = self.df
+                self.df = self.get_downsampled()
+                
+        df = self.df
         X_train = df["paragraphs"][df["split"] == "train"]
         X_train_vectorized = self.vectorize(X_train, vectorizer, split="train")
         X_test = df["paragraphs"][df["split"] == "test"]

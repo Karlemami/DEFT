@@ -7,6 +7,7 @@ languages:
   - "it"  # Italian
 
 models:
+  #- "NB"           # Complement Naive Bayes
   - "RFC"          # Random Forest Classifier
   - "SVM"          # Support Vector Machine
   - "LR"           # Logistic Regression
