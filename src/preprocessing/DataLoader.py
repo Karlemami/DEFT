@@ -107,11 +107,11 @@ class DataLoader:
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = BertModel.from_pretrained('bert-base-uncased')
         if self.language == "en":
-            max_length = 380  # Reduced max_length
+            max_length = 380  
         else:
-            max_length = 128  # Reduced max_length
+            max_length = 128
 
-        batch_size = 32  # Process in batches of 32
+        batch_size = 32
         embeddings = []
 
         for i in range(0, len(docs), batch_size):
