@@ -7,18 +7,22 @@ import joblib
 
 
 class DataLoader:
-    def __init__(self, train_path, test_path, language):
-        full_df = DataLoader.convert_corpus_to_dataframe(train_path, test_path)
-        self.df = full_df.query("`language` == @language and `y` != ''").reset_index(
+    def __init__(self, train_path, test_path, language, drop_duplicates=True):
+        full_df = self.convert_corpus_to_dataframe(train_path, test_path)
+        full_df = full_df.query("`language` == @language and `y` != ''").reset_index(
             drop=True
         )
-        self.df_unique = self.df.drop_duplicates(subset="paragraphs").reset_index(
-            drop=True
-        )
+        if drop_duplicates:
+            self.df = full_df.drop_duplicates(subset="paragraphs").reset_index(
+                drop=True
+            )
+        else:
+            self.df = full_df
+
         self.language = language
 
-    @staticmethod
     def convert_corpus_to_dataframe(
+        self,
         train_path: str = "data/deft09_parlement_appr",
         test_path: str = "data/deft09_parlement_test",
     ) -> pd.DataFrame:
@@ -30,11 +34,10 @@ class DataLoader:
         files = list(train_directory.glob("*.xml")) + list(test_dictory.glob("*.xml"))
         df = pd.DataFrame()
         for f in files:
-            df = pd.concat([df, DataLoader.extract_texts_from_file(f)])
+            df = pd.concat([df, self.extract_texts_from_file(f)])
         return df
 
-    @staticmethod
-    def extract_texts_from_file(path: Path) -> list[dict]:
+    def extract_texts_from_file(self, path: Path) -> pd.DataFrame:
         if "appr" in path.name:
             train = True
             split = "train"
@@ -50,7 +53,7 @@ class DataLoader:
         tree = ET.parse(path)
         root = tree.getroot()
         language = path.name.split(".")[-2][-2:]
-        ys = [] if train else DataLoader.extract_test_y(language)
+        ys = [] if train else self.extract_test_y(language)
         for doc in root.findall("doc"):
             doc_id = doc.get("id")
             parti = doc.find(".//PARTI")
@@ -72,8 +75,7 @@ class DataLoader:
         df["y"] = ys
         return df
 
-    @staticmethod
-    def extract_test_y(language) -> list[str]:
+    def extract_test_y(self, language) -> list[str]:
         lines = open(
             f"data/deft09_parlement_ref/deft09_parlement_ref_{language}.txt"  # TODO: remove hardcoded path
         ).readlines()
@@ -83,7 +85,7 @@ class DataLoader:
         vectorizer = TfidfVectorizer()
         df = self.df_unique if drop_duplicates else self.df
         for i in range(2):
-            df = DataLoader.get_downsampled(df)
+            df = self.get_downsampled(df)
         X_train = df["paragraphs"][df["split"] == "train"]
         X_train_vectorized = vectorizer.fit_transform(X_train)
         X_test = df["paragraphs"][df["split"] == "test"]
@@ -93,8 +95,7 @@ class DataLoader:
 
         return X_train_vectorized, X_test_vectorized, y_train, y_test
 
-    @staticmethod
-    def get_downsampled(df) -> pd.DataFrame:
+    def get_downsampled(self, df) -> pd.DataFrame:
         """
         Balances the dataset by downsampling the majority class.
         NB: Only useful when 1 class has much more documents than the others.
