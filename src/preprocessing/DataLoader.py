@@ -104,8 +104,8 @@ class DataLoader:
     
     def vectorize_with_bert(self, docs: list[str], split) -> np.ndarray:
         docs = docs.tolist()
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertModel.from_pretrained('bert-base-uncased')
+        tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-uncased')
+        model = BertModel.from_pretrained('bert-base-multilingual-uncased')
         if self.language == "en":
             max_length = 380  
         else:
