@@ -2,6 +2,34 @@
 
 \par La cinquième édition du défi Fouille de Textes (DEFT) porte sur la fouille d'opinions sur des corpus multilingues. Trois tâches ont été proposées, dans trois langues : le français, l'anglais et l'italien. Cet article se concentre sur la 3ème tâche, dont l'objet est l'identification automatique du parti politique d'appartenance de chacun des intervenants dans un corpus de débats parlementaires européens. Il s'agit d'une tâche de classification à 5 classes: \texttt{Verts-ALE}, \texttt{GUE-NGL}, \texttt{PSE}, \texttt{ELDR} et \texttt{PPE-DE}.
 
-\par Le but de nos expériences sera ainsi de trouver un/des classifieur(s) permettant de réaliser cette tâche. Pour ce faire, nous utilisons les algorithmes de Machine Learning implementés dans la bibliothèque Python \texttt{scikit-learn}.
+\par Le but de nos expériences sera ainsi de trouver un/des classifieur(s) permettant de réaliser cette tâche. Pour ce faire, nous utiliserons les algorithmes de Machine Learning implementés dans la bibliothèque Python \texttt{scikit-learn}.
 
-\par En 2009, 
+\subsection{Travaux présentés en 2009}
+
+
+
+
+\begin{table}[h!]
+\centering
+\setlength{\tabcolsep}{5pt} % Réduit l'espace entre les colonnes
+\renewcommand{\arraystretch}{1.2} % Ajuste la hauteur des lignes
+\resizebox{\columnwidth}{!}{ % Ajuste la largeur à une demi-colonne
+\begin{tabular}{@{}c| c| c| c| c| c@{}}
+\textbf{Parti} & \textbf{ELDR} & \textbf{GUE-NGL} & \textbf{PPE-DE} & \textbf{PSE} & \textbf{Verts/ALE} \\
+\hline
+F-mesure & 0.21 & 0.37 & 0.47 & 0.37 & 0.25 \\ 
+\end{tabular}
+}
+\caption{Moyennes des F-mesures par parti politique.}
+\label{tab:moyennes_fmesures}
+\end{table}
+
+
+\par En 2009, un seul participant a soumis un travail pour la tâche 3 ; la Présentation de l'édition 2009 \footnote{Actes du cinquième défi fouille de texte, DEFT2009, Paris, France, 22 juin 2009} évoque, pour expliquer cela, les faibles résultats des logiciels sur cette tâche, bien que conformes à ceux que des humains obtiendraient manuellement. L'équipe de l'Université de Montréal (D. Forest and al.) a obtenu en moyenne les f-mesures présentées dans la \hyperref[tab:moyennes_fmesures]{Table 1}. En moyenne, cela donne donc une f-mesure 0.331.
+
+\subsection{Notre approche et travaux antérieurs}
+
+Pour ce travail, notre approche a été comparative sur plusieurs niveaux. Tout d'abord, nous comparons différents classifieurs : \texttt{Random Forest}, \texttt{Régression logistique}, \texttt{Perceptron} et \texttt{Support Vector Machine}. De plus, nous testons aussi différentes vectorisations du corpus sur l'ensemble de ces modèles: \texttt{TF-IDF}, \texttt{Doc2Vec}, et des \texttt{Bert embeddings}.
+
+
+\par Plusieurs travaux de recherches explorent les comparaisons entre performances des modèles selon les techniques de vectorisation utilisées. Nous pouvons par exemples évoquer ceux de P. Joseph et S. Y. Yerima \footnote{P. Joseph and S. Y. Yerima, "A comparative study of word embedding techniques for SMS spam detection," 2022 14th International Conference on Computational Intelligence and Communication Networks (CICN), Al-Khobar, Saudi Arabia, 2022, pp. 149-155,} en 2022, qui compare les performances des N-grams, TF-IDF, Sac de mots, Word2Vec, Doc2Vec, etc. Leur objectif est de comparer l'impact de la vectorisation sur la précision des modèles. Dans leur article, les modèles \texttt{doc2vec} et \texttt{TF-IDF} démontrent de bons résultats, nous allons ainsi les tester dans notre expérience. Nous décidons d'ajouter à ces deux dernier les embeddings de \texttt{Bert} afin d'avoir trois techniques variées : une méthode statistique, une méthode fondée sur un ANN clclassique et une sur un Transformer.
