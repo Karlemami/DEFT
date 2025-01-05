@@ -58,24 +58,43 @@ différents et ralongé d'autant le temps de traitement}
 Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le 
 \textit{downsampling} afin d'obtenir des classes relativement équilibrées,
 en utilisant la fonction \textit{resample} de la bibliothèque Sckit-learn. Après \textit{downsampling},
-les classes PPE-DE et PSE ne représentent plus que 42,8\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
+les classes PPE-DE et PSE ne représentent plus que 43\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
 
 \begin{table}[ht]
     \centering
 \begin{tabular}{|l|l|l|}
 \hline
 Parti & Train & Test\\ \hline
-ELDR &  & 525 \\ \hline
-PPE-DE &  & 714 \\ \hline
-GUE-NGL &  & 687 \\ \hline
-PSE &  & 693 \\ \hline
-Verts-ALE &  & 615\\ \hline
-Total &  & 3234\\ \hline
-
+ELDR & 2531 (16,1\%) & 525 (16,2\%) \\ \hline
+PPE-DE & 3402 (21,63\%) & 715 (22\%) \\ \hline
+GUE-NGL & 3402 (21,63\%) & 687 (21,2\%) \\ \hline
+PSE & 3402 (21,63\%) & 693 (21,4\%) \\ \hline
+Verts-ALE & 2990 (19\%) & 614 (19\%)\\ \hline
+Total & 15727 & 3235\\ \hline
 \end{tabular}
-\caption{Nombre d'intervention par parti par partition pour l'anglais après \textit{downsampling}}
+\caption{Nombre d'intervention par parti par partition pour une langue après \textit{downsampling}, example de l'italien}
 \label{tab:stats_downsampled}
 \end{table}
 
 
-\subsection{Les différents embeddings}
+\subsection{Les différents embeddings testés}
+Nous avons choisi dans notre étude de comparer les résultats obtenus sur une tâche 
+de classification en utilisant 3 techniques de vectorisation différentes.\\
+\indent La vectorisation TF-IDF\footnote{Implémentée avec la fonction tfidfvectorizer de Scikit-learn} bibliothèque (\textit{Term Frequency-Inverse Document Frequency})
+est la méthode la plus "ancienne" que nous présentons. Elle se base sur une mécanique de comptage des mots:
+la fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
+permettant de donner plus d'importance aux mots significatifs dans leurs documents d'apparition.\\
+\indent La vectorisation Doc2Vec une une vectorisation de document plutot que de mot. Ces vecteurs sont
+l'ouput d'un réseau de neurones et nécessite donc une phrase d'entrainement. Pour cette étude,
+nous avons choisi de générer des vecteur Doc2Vec à 100 dimensions\footnote{il serait possible de faire plus, mais nous essayions de ne pas saturer nos machines}
+avec une fenêtre glissante de 5 mots et d'ignorer les mots n'apparaissant pas au moins 3 fois.\\
+\indent La vectorisation avec BERT. Ce modèle basé sur les réseaux de neurones s'appuie sur une 
+architecture transformer et nécessite également une phase d'entrainement. Contrairement à
+Doc2Vec, elle renvoie des vecteurs de mots, et utilise un mécanisme d'attention lors de
+la génération des vecteurs, lui permettant de prendre en compte l'importance d'un mot en fonction du contexte local dans
+lequel in apparait.
+
+
+
+
+
