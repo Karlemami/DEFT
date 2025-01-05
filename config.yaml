@@ -14,4 +14,4 @@ models:
 
 drop_duplicates: true
 downsample: true
-vectorizer: "doc2vec" #tfidf or doc2vec
+vectorizer: "bert" #tfidf or doc2vec or bert

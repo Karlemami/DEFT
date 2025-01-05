@@ -5,7 +5,9 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-
+from transformers import BertTokenizer, BertModel
+import torch
+import matplotlib.pyplot as plt
 
 class DataLoader:
     def __init__(self, train_path, test_path, language, drop_duplicates=True):
@@ -99,9 +101,34 @@ class DataLoader:
             return np.array([self.model.dv[i] for i in range(len(tagged_docs))])
         elif split == "test":
             return np.array([self.model.infer_vector(doc.split()) for doc in docs])
+    
+    def vectorize_with_bert(self, docs: list[str], split) -> np.ndarray:
+        docs = docs.tolist()
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        model = BertModel.from_pretrained('bert-base-uncased')
+        if self.language == "en":
+            max_length = 380  # Reduced max_length
+        else:
+            max_length = 128  # Reduced max_length
+
+        batch_size = 32  # Process in batches of 32
+        embeddings = []
+
+        for i in range(0, len(docs), batch_size):
+            batch_docs = docs[i:i + batch_size]
+            inputs = tokenizer(batch_docs, return_tensors='pt', padding=True, truncation=True, max_length=max_length)
+            
+            with torch.no_grad():
+                outputs = model(**inputs)
+            
+            batch_embeddings = outputs.last_hidden_state[:, 0, :].numpy() #Get the CLS vector, which represents the whole document
+            embeddings.append(batch_embeddings)
+        
+        embeddings = np.vstack(embeddings)
+        return embeddings
 
     def vectorize(self, docs: list[str], vectorizer: str, split:str):
-        available_vectorizers = {"tfidf" : self.vectorize_with_tfidf, "doc2vec" : self.vectorize_with_doc2vec}
+        available_vectorizers = {"tfidf" : self.vectorize_with_tfidf, "doc2vec" : self.vectorize_with_doc2vec, "bert" : self.vectorize_with_bert}
         if vectorizer not in available_vectorizers.keys():
             raise VectorizerNotFoundError(available_vectorizers=available_vectorizers.keys())
         
@@ -157,3 +184,4 @@ class VectorizerNotFoundError(Exception):
     def __init__(self, available_vectorizers : list[str]):
         message = f"unknown vectorizer. Available vectorizers : {available_vectorizers}"
         super().__init__(message)
+
