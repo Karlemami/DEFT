@@ -3,7 +3,8 @@
 ## Installation
 
 ```sh
-git clone git@github.com:Karlemami/DEFT.git && make
+git clone git@github.com:Karlemami/DEFT.git && cd DEFT
+make
 ```
 
 ## Configuration
