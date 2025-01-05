@@ -19,8 +19,8 @@ def main(config: dict):
         trainer = Trainer(
             config["models"], X_train, X_test, y_train, y_test, labels, language
         )
-        trainer.get_best_params(save=True)
-        # trainer.compare_results(save_results=True, defined=False, save_best=False)
+        # trainer.get_best_params(save=True)
+        trainer.compare_results(save_results=True, defined=False, save_best=False)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.utils import resample
 import pandas as pd
 from pathlib import Path
-import joblib
+import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 
@@ -83,35 +83,43 @@ class DataLoader:
         return [line.split("\t")[-1].strip() for line in lines]
 
 
-    def vectorize_with_tfidf(self, docs: list[str]) -> TfidfVectorizer:
-        vectorizer = TfidfVectorizer()
-        return vectorizer.fit_transform(docs)
+    def vectorize_with_tfidf(self, docs: list[str], split) -> TfidfVectorizer:
+        if split == "train":
+            self.vectorizer = TfidfVectorizer()
+            return self.vectorizer.fit_transform(docs)
+        elif split == "test":
+            return self.vectorizer.transform(docs)
     
-    def vectorize_with_doc2vec(self, docs: list[str]) -> Doc2Vec:
-        tagged_docs = [TaggedDocument(words=doc.split(), tags=[i]) for i, doc in enumerate(docs)]
-        model = Doc2Vec(vector_size=100, window=5, min_count=2, workers=4, epochs=40)
-        model.build_vocab(tagged_docs)
-        model.train(tagged_docs, total_examples=model.corpus_count, epochs=model.epochs)
-        return model.dv
+    def vectorize_with_doc2vec(self, docs: list[str], split) -> np.ndarray:
+        if split == "train":
+            tagged_docs = [TaggedDocument(words=doc.split(), tags=[i]) for i, doc in enumerate(docs)]
+            self.model = Doc2Vec(vector_size=100, window=5, min_count=2, workers=4, epochs=40)
+            self.model.build_vocab(tagged_docs)
+            self.model.train(tagged_docs, total_examples=self.model.corpus_count, epochs=self.model.epochs)
+            return np.array([self.model.dv[i] for i in range(len(tagged_docs))])
+        elif split == "test":
+            return np.array([self.model.infer_vector(doc.split()) for doc in docs])
 
-    def vectorize(self, docs: list[str], vectorizer: str):
+    def vectorize(self, docs: list[str], vectorizer: str, split:str):
         available_vectorizers = {"tfidf" : self.vectorize_with_tfidf, "doc2vec" : self.vectorize_with_doc2vec}
         if vectorizer not in available_vectorizers.keys():
             raise VectorizerNotFoundError(available_vectorizers=available_vectorizers.keys())
         
-        return available_vectorizers[vectorizer](docs)
+        return available_vectorizers[vectorizer](docs, split)
 
 
     def get_train_test_vectorized(self, vectorizer: str,downsample=True) -> tuple[pd.Series]:
         if downsample:
             for i in range(2):
                 df = self.get_downsampled()
-        X_train = self.df["paragraphs"][self.df["split"] == "train"]
-        X_train_vectorized = self.vectorize(X_train, vectorizer)
-        X_test = self.df["paragraphs"][self.df["split"] == "test"]
-        X_test_vectorized = self.vectorize(X_test, vectorizer)
-        y_train = self.df["y"][self.df["split"] == "train"]
-        y_test = self.df["y"][self.df["split"] == "test"]
+        else:
+            df = self.df
+        X_train = df["paragraphs"][df["split"] == "train"]
+        X_train_vectorized = self.vectorize(X_train, vectorizer, split="train")
+        X_test = df["paragraphs"][df["split"] == "test"]
+        X_test_vectorized = self.vectorize(X_test, vectorizer,split="test")
+        y_train = df["y"][df["split"] == "train"]
+        y_test = df["y"][df["split"] == "test"]
 
         return X_train_vectorized, X_test_vectorized, y_train, y_test
 
