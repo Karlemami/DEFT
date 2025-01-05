@@ -15,21 +15,20 @@ que le corpus présentait des doublons, et ce majoritairement dans la partition 
     \label{fig:barplot_dataset}
 \end{figure}
 
-Après suppression des doublons, la partition prévu (40/60) est changée : elle est 
+Après suppression des doublons, la partition prévue (40/60) est changée : elle est 
 maintenant de 20/80\footnote{ 0.79 pour le train et 0.21 pour le test}.
-Nous avons envisagé de refaire le partitionnement pour réimplémenter le partitionnement 
-prévu, mais avons renoncé pour deux raisons : 
-refaire le partitionnement nous éloigne, encore, du corpus initialement prévu, et les 
+Nous avons envisagé de réimplémenter le partitionnement prévu, mais avons renoncé pour deux raisons : 
+refaire le partitionnement nous éloigne, encore, du corpus initial, et les 
 résultats de quelques modèles sur un corpus repartitionné étaient proches des résultats 
-sur cette partition 80/20.
-Par ailleurs, la répartition des classes est déséquilibrée : les classes PPE-DE et PSE forment à elles deux 63,5 \% du corpus. Ceci devra être 
+sur cette partition 20/80.
+Par ailleurs, la répartition des classes est déséquilibrée : les classes PPE-DE et PSE sont plus grandes et forment à elles deux 63,5 \% du corpus. Ceci devra être 
 pris en compte dans le prétraitement.\footnote{la figure correspond au train, mais la répartition est sensiblement la même dans le test}
 
 \begin{table}[ht]
     \centering
 \begin{tabular}{|l|l|l|}
 \hline
-Statistique & Test & train 3 \\ \hline
+Statistique & Train & Test \\ \hline
 Moyenne & 3871.4 & 1021.2 \\ \hline
 STD & 2149.1 & 569.7 \\ \hline
 Min & 2005.0 & 525.0 \\ \hline
@@ -38,7 +37,7 @@ Médiane & 2687.0 & 715.0\\ \hline
 3eme quartile & 5431.0 & 1448.0\\ \hline
 Max & 6858.0 & 1803.0\\ \hline
 \end{tabular}
-\caption{Nombres d'intervention par parti par partition}
+\caption{Nombre d'intervention des partis par partition}
 \label{tab:stats_dataset}
 \end{table}
 
@@ -56,24 +55,26 @@ Le texte des interventions a été soumis à un prétraitement simple :\\
 mais ce corpus multilingue aurait nécessité le chargement de 3 modèles linguistiques
 différents et ralongé d'autant le temps de traitement}
 \\
-Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le \textit{downsampling} afin d'obtenir des classes relativement équilibrées,
-en utilisant la fonction \textit{resample} de la bibliothèque Sckit-learn.
+Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le 
+\textit{downsampling} afin d'obtenir des classes relativement équilibrées,
+en utilisant la fonction \textit{resample} de la bibliothèque Sckit-learn. Après \textit{downsampling},
+les classes PPE-DE et PSE ne représentent plus que 42,8\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
 
 \begin{table}[ht]
     \centering
 \begin{tabular}{|l|l|l|}
 \hline
-Parti & Test & train 3 \\ \hline
-Moyenne & 3871.4 & 1021.2 \\ \hline
-STD & 2149.1 & 569.7 \\ \hline
-Min & 2005.0 & 525.0 \\ \hline
-1er quartile & 2376.0 & 615.0 \\ \hline
-Médiane & 2687.0 & 715.0\\ \hline
-3eme quartile & 5431.0 & 1448.0\\ \hline
-Max & 6858.0 & 1803.0\\ \hline
+Parti & Train & Test\\ \hline
+ELDR &  & 525 \\ \hline
+PPE-DE &  & 714 \\ \hline
+GUE-NGL &  & 687 \\ \hline
+PSE &  & 693 \\ \hline
+Verts-ALE &  & 615\\ \hline
+Total &  & 3234\\ \hline
+
 \end{tabular}
-\caption{Nombres d'intervention par parti par partition}
-\label{tab:stats_dataset}
+\caption{Nombre d'intervention par parti par partition pour l'anglais après \textit{downsampling}}
+\label{tab:stats_downsampled}
 \end{table}
 
 
