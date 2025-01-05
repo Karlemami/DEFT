@@ -4,6 +4,7 @@ from sklearn.utils import resample
 import pandas as pd
 from pathlib import Path
 import joblib
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 
 class DataLoader:
@@ -62,7 +63,7 @@ class DataLoader:
             texts = ""
             for p in doc.findall(".//p"):
                 texts += p.text if p.text else ""
-            paragraphs = [p.text for p in doc.findall(".//p")]
+            texts = texts.lower()
             docs.append(
                 {
                     "id": doc_id,
@@ -81,21 +82,40 @@ class DataLoader:
         ).readlines()
         return [line.split("\t")[-1].strip() for line in lines]
 
-    def get_train_test_vectorized(self, drop_duplicates=True) -> tuple[pd.Series]:
+
+    def vectorize_with_tfidf(self, docs: list[str]) -> TfidfVectorizer:
         vectorizer = TfidfVectorizer()
-        df = self.df_unique if drop_duplicates else self.df
-        for i in range(2):
-            df = self.get_downsampled(df)
-        X_train = df["paragraphs"][df["split"] == "train"]
-        X_train_vectorized = vectorizer.fit_transform(X_train)
-        X_test = df["paragraphs"][df["split"] == "test"]
-        X_test_vectorized = vectorizer.transform(X_test)
-        y_train = df["y"][df["split"] == "train"]
-        y_test = df["y"][df["split"] == "test"]
+        return vectorizer.fit_transform(docs)
+    
+    def vectorize_with_doc2vec(self, docs: list[str]) -> Doc2Vec:
+        tagged_docs = [TaggedDocument(words=doc.split(), tags=[i]) for i, doc in enumerate(docs)]
+        model = Doc2Vec(vector_size=100, window=5, min_count=2, workers=4, epochs=40)
+        model.build_vocab(tagged_docs)
+        model.train(tagged_docs, total_examples=model.corpus_count, epochs=model.epochs)
+        return model.dv
+
+    def vectorize(self, docs: list[str], vectorizer: str):
+        available_vectorizers = {"tfidf" : self.vectorize_with_tfidf, "doc2vec" : self.vectorize_with_doc2vec}
+        if vectorizer not in available_vectorizers.keys():
+            raise VectorizerNotFoundError(available_vectorizers=available_vectorizers.keys())
+        
+        return available_vectorizers[vectorizer](docs)
+
+
+    def get_train_test_vectorized(self, vectorizer: str,downsample=True) -> tuple[pd.Series]:
+        if downsample:
+            for i in range(2):
+                df = self.get_downsampled()
+        X_train = self.df["paragraphs"][self.df["split"] == "train"]
+        X_train_vectorized = self.vectorize(X_train, vectorizer)
+        X_test = self.df["paragraphs"][self.df["split"] == "test"]
+        X_test_vectorized = self.vectorize(X_test, vectorizer)
+        y_train = self.df["y"][self.df["split"] == "train"]
+        y_test = self.df["y"][self.df["split"] == "test"]
 
         return X_train_vectorized, X_test_vectorized, y_train, y_test
 
-    def get_downsampled(self, df) -> pd.DataFrame:
+    def get_downsampled(self) -> pd.DataFrame:
         """
         Balances the dataset by downsampling the majority class.
         NB: Only useful when 1 class has much more documents than the others.
@@ -111,11 +131,11 @@ class DataLoader:
             A DataFrame with a balanced class distribution, where the size of
             each class is reduced to the median class size.
         """
-        class_counts = df["y"].value_counts()
+        class_counts = self.df["y"].value_counts()
         biggest_class = class_counts.idxmax()
         # We separate the majority class from the rest of the samples
-        biggest_class_df = df.query("`y` == @biggest_class")
-        df_without_biggest = df.query("`y` != @biggest_class")
+        biggest_class_df = self.df.query("`y` == @biggest_class")
+        df_without_biggest = self.df.query("`y` != @biggest_class")
         resampled_class = resample(
             biggest_class_df,
             replace=False,
@@ -124,3 +144,8 @@ class DataLoader:
         )
         # and then concatenate them after reducing the size
         return pd.concat([df_without_biggest, resampled_class])
+
+class VectorizerNotFoundError(Exception):
+    def __init__(self, available_vectorizers : list[str]):
+        message = f"unknown vectorizer. Available vectorizers : {available_vectorizers}"
+        super().__init__(message)
