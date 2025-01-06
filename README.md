@@ -40,5 +40,8 @@ vectorizer: "doc2vec" #tfidf or doc2vec
 
 ```sh
 make run
+# To compile and open the paper
+make paper
+# To delete venv etc.
 make clean
 ```
