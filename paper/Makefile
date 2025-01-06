@@ -12,6 +12,8 @@ $(MAIN).pdf: $(MAIN).tex
 open: $(MAIN).pdf
 	@open $(MAIN).pdf
 
+re: fclean all
+
 clean:
 	@echo "Cleaning aux files..."
 	@rm -f $(MAIN).aux $(MAIN).log $(MAIN).out $(MAIN).toc $(MAIN).bbl $(MAIN).blg
@@ -19,6 +21,6 @@ clean:
 
 fclean: clean
 	@echo "Removing pdf file..."
-	rm -f $(MAIN).pdf
+	@rm -f $(MAIN).pdf
 
-.PHONY: all clean fclean
+.PHONY: all clean fclean re
