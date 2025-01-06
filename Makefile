@@ -17,6 +17,11 @@ run: venv
 fmt:
 	@black $(SRC_DIR)
 
+PAPER_PATH = paper
+
+paper:
+	@make open -C $(PAPER_PATH) > /dev/null
+
 clean:
 	@echo "Removing venv..."
 	@rm -rf $(VENV)
@@ -24,4 +29,4 @@ clean:
 	@find . -type f -name '*.pyc' -delete
 	@echo "Project cleaned!"
 
-.PHONY: all venv run fmt clean
+.PHONY: all venv run fmt paper clean

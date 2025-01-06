@@ -4,7 +4,7 @@ import argparse
 
 def validate_config(config: dict):
     for model in config["models"]:
-        if model not in ["RFC", "SVM", "LR", "Perceptron"]:
+        if model not in ["RFC", "SVM", "LR", "Perceptron", "NB"]:
             raise ValueError("Invalid model specified.")
     for language in config["languages"]:
         if language not in ["fr", "en", "it"]:
