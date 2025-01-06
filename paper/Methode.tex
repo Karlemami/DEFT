@@ -3,8 +3,8 @@
 \subsection{Dataset}
 
 Nous utilisons le dataset fournit pour la tâche 3 de l’édition 2009 de DEFT.
-Au moment de faire des statistiques descriptives, nous nous sommes rendus compte 
-que le corpus présentait des doublons, et ce majoritairement dans la partition test.
+Au moment de faire des statistiques descriptives, nous nous sommes rendu compte 
+que le corpus présentait de nombreux doublons.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\columnwidth]{../stats/occurences_orig_vs_drop_dup_par_cat.png}
@@ -12,14 +12,13 @@ que le corpus présentait des doublons, et ce majoritairement dans la partition 
     \label{fig:barplot_dataset}
 \end{figure}
 
-Après suppression des doublons, la partition prévue (40/60) est changée : elle est 
-maintenant de 20/80\footnote{ 0.79 pour le train et 0.21 pour le test}.
-Nous avons envisagé de réimplémenter le partitionnement prévu, mais avons renoncé pour deux raisons : 
-refaire le partitionnement nous éloigne, encore, du corpus initial, et les 
-résultats de quelques modèles sur un corpus repartitionné étaient proches des résultats 
-sur cette partition 20/80.
-Par ailleurs, la répartition des classes est déséquilibrée : les classes PPE-DE et PSE sont plus grandes et forment à elles deux 63,5 \% du corpus. Ceci devra être 
-pris en compte dans le prétraitement.\footnote{la figure correspond au train, mais la répartition est sensiblement la même dans le test}
+Après suppression des doublons, la partition prévue n'est plus respectée : elle est 
+passée de 40/60 à 20/80\footnote{ 0.79 pour le train et 0.21 pour le test}.
+Nous avons envisagé de rétablir le partitionnement prévu, mais avons renoncé pour deux raisons. Tout d'abord,  
+refaire le partitionnement nous aurait éloigné encore plus du corpus initial. De plus, des expériences préliminaires sur quelques modèles
+n'ont montré que peu de changement avec les résultats de la partition 20/80.\\
+Par ailleurs, la répartition des classes est déséquilibrée : les classes PPE-DE et PSE sont plus fournies et forment à elles deux 63,5 \% du corpus. Ceci sera
+pris en compte dans les prétraitements.\footnote{la figure correspond au train, mais la répartition est sensiblement la même dans le test}
 
 \begin{table}[ht]
     \centering
@@ -34,7 +33,7 @@ Médiane & 2687.0 & 715.0\\ \hline
 3eme quartile & 5431.0 & 1448.0\\ \hline
 Max & 6858.0 & 1803.0\\ \hline
 \end{tabular}
-\caption{Nombre d'intervention des partis par partition}
+\caption{Nombre d'interventions des partis par partition}
 \label{tab:stats_dataset}
 \end{table}
 
@@ -46,16 +45,15 @@ Max & 6858.0 & 1803.0\\ \hline
 \end{figure}
 \subsection{Prétraitements}
 Le texte des interventions a été soumis à un prétraitement simple :\\
-\indent(1) Suppresion de la ponctuation\\
+\indent(1) Suppression de la ponctuation\\
 \indent(2) Unification de la casse en minuscules\\
 \indent(3) Tokenisation\footnote {Une lemmatisation avec la bibliothèque \texttt{SpaCy} a été envisagée,
 mais ce corpus multilingue aurait nécessité le chargement de 3 modèles linguistiques
 différents et ralongé d'autant le temps de traitement}
 \\
-Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le 
-\textit{downsampling} afin d'obtenir des classes relativement équilibrées,
-en utilisant la fonction \textit{resample} de la bibliothèque \texttt{sckit-learn}. Nous avons choisi de downsampler les deux classes majoritaires en fonction de la médiane du nombre de documents sur toutes les classes. Après \textit{downsampling},
-les classes PPE-DE et PSE ne représentent plus que 43\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
+Pour résoudre le problème du déséquilibre des classes, nous avons opté pour le 
+\textit{downsampling} en utilisant la fonction \textit{resample} de la bibliothèque \texttt{sckit-learn}. Nous avons choisi de downsampler les deux classes majoritaires en fonction de la médiane du nombre de documents sur toutes les classes. Après \textit{downsampling},
+les classes PPE-DE et PSE ne représentent plus que 43\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus.
 
 \begin{table}[ht]
     \centering
@@ -77,9 +75,9 @@ Total & 15727 & 3235\\ \hline
 
 Nous avons sélectionné quatre modèles classiques de machine learning, à savoir Random Forest, Support Vector Machine (SVM),  Régression Logistique et Perceptron.
 
-\par Le \textbf{Random Forest} est une forêt d'arbres de décision qui utilisent le bagging pour améliorer la qualité des prédictions. L'algorithme fonctionne par une combinaison des résultats de multiples arbres construits sur des sous-échantillons pris aléatoirement dans le corpus.
+\par Le \textbf{Random Forest} est une forêt d'arbres de décision qui utilise le \textit{bagging} pour améliorer la qualité des prédictions. L'algorithme fonctionne par une combinaison des résultats de multiples arbres construits sur des sous-échantillons pris aléatoirement dans le corpus.
 
-\par Le \textbf{SVM}, quant à lui, repose sur l'idée de trouver un hyperplan optimal pour séparer les classes qui garantit une marge maximale. L'algorithme utilise une fonction noyau pour passer transformer les données et ajouter un espace de dimension supplémentaire, ce qui permet de résoudre des problèmes de classification non linéaire tout en utilisant tout de même un classifieur linéaire.
+\par Le \textbf{SVM}, quant à lui, repose sur l'idée de trouver un hyperplan optimal pour séparer les classes qui garantit une marge maximale. L'algorithme utilise une fonction noyau pour transformer les données et ajouter un espace de dimension supplémentaire, ce qui permet de résoudre des problèmes de classification non linéaire tout en utilisant tout de même un classifieur linéaire.
 
 \par La \textbf{Régression Logistique} modélise la probabilité qu'un échantillon appartienne à une classe en utilisant une fonction sigmoïde. Elle nécessite une relation linéaire entre les \textit{features} et la classe.
 
@@ -93,13 +91,13 @@ Nous avons sélectionné quatre modèles classiques de machine learning, à savo
 Nous avons choisi dans notre étude de comparer les résultats obtenus sur une tâche 
 de classification en utilisant 3 techniques de vectorisation différentes.\\
 \indent La vectorisation \textbf{\texttt{TF-IDF}}\footnote{Implémentée avec la fonction \texttt{tfidfvectorizer} de \texttt{scikit-learn}}(\textit{Term Frequency-Inverse Document Frequency})
-est la méthode la seule méthode non neuronale que nous présentons, en ce qu'elle se fonde sur des statistiques. La fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
+est la seule méthode non neuronale que nous présentons, en ce qu'elle se fonde sur des statistiques. La fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
 permettant de donner plus d'importance aux mots significatifs dans leurs documents d'apparition.\\
-\indent La vectorisation \textbf{\texttt{Doc2Vec}}\footnote{Implémentée à l'aide de la bibliothèque \texttt{gensim}} qui génère un \textit{embedding} pour chaque document. Ces vecteurs sont
-l'ouput d'un réseau de neurones à mémoire distribuée. Pour cette étude,
+\indent La vectorisation \textbf{\texttt{Doc2Vec}}\footnote{Implémentée à l'aide de la bibliothèque \texttt{gensim}} génère un \textit{embedding} pour chaque document. Ces vecteurs sont
+\textit{l'ouput} d'un réseau de neurones à mémoire distribuée. Pour cette étude,
 nous avons choisi de générer des vecteurs \texttt{Doc2Vec} à 100 dimensions\footnote{Bien que des dimensions plus élevées puissent améliorer la capacité de représentation, nous avons choisi cette configuration pour ne pas saturer nos ressources matérielles.}
 avec une fenêtre glissante de 5 mots et d'ignorer les mots n'apparaissant pas au moins 3 fois.\\
-\indent La vectorisation avec \textbf{\texttt{BERT}} multilingue\footnote{bert-base-multilingual-uncased} se base sur les réseaux de neurones mais s'appuie sur une 
+\indent La vectorisation avec \textbf{\texttt{BERT}} multilingue\footnote{\textit{bert-base-multilingual-uncased}} se base sur les réseaux de neurones mais s'appuie sur une 
 architecture transformer caractérisée par ses mécanismes d'attention. Contrairement à
 \texttt{Doc2Vec}, \texttt{BERT} produit des \textit{embeddings} au niveau des tokens, qui peuvent être agrégés pour obtenir un vecteur document. Nous avons généré des vecteurs à 768 dimensions (profondeur de la couche de sortie finale du modèle pré-entrainé).
 
