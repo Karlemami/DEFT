@@ -26,12 +26,14 @@ languages:
   - "it"  # Italian
 
 models:
-  - "RFC"          # Random Forest Classifier
-  - "SVM"          # Support Vector Machine
-  - "LR"           # Logistic Regression
+  #- "RFC"          # Random Forest Classifier
+  #- "SVM"          # Support Vector Machine
+  #- "LR"           # Logistic Regression
   - "Perceptron"   # Perceptron Algorithm
 
 drop_duplicates: true
+downsample: true
+vectorizer: "doc2vec" #tfidf or doc2vec
 ```
 
 ## Usage
