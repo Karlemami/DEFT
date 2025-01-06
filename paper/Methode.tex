@@ -3,7 +3,7 @@
 \subsection{Dataset}
 
 Nous utilisons le dataset fournit pour la tâche 3 de l’édition 2009 de DEFT.
-Au moment de faire des statistiques descriptives, nous nous sommes rendus comptes 
+Au moment de faire des statistiques descriptives, nous nous sommes rendus compte 
 que le corpus présentait des doublons, et ce majoritairement dans la partition test.
 \begin{figure}[ht]
     \centering
@@ -54,7 +54,7 @@ différents et ralongé d'autant le temps de traitement}
 \\
 Pour résoudre le problème de déséquilibre des classes, nous avons opté pour le 
 \textit{downsampling} afin d'obtenir des classes relativement équilibrées,
-en utilisant la fonction \textit{resample} de la bibliothèque \texttt{sckit-learn}. Après \textit{downsampling},
+en utilisant la fonction \textit{resample} de la bibliothèque \texttt{sckit-learn}. Nous avons choisi de downsampler les deux classes majoritaires en fonction de la médiane du nombre de documents sur toutes les classes. Après \textit{downsampling},
 les classes PPE-DE et PSE ne représentent plus que 43\% du corpus, ayant chacune été ramenée autour de 21,5\% du corpus
 
 \begin{table}[ht]
@@ -69,27 +69,39 @@ PSE & 3402 (21,63\%) & 693 (21,4\%) \\ \hline
 Verts-ALE & 2990 (19\%) & 614 (19\%)\\ \hline
 Total & 15727 & 3235\\ \hline
 \end{tabular}
-\caption{Nombre d'intervention par parti par partition pour une langue après \textit{downsampling}, example de l'italien}
+\caption{Nombre d'interventions par parti par partition pour une langue après \textit{downsampling}, example de l'italien}
 \label{tab:stats_downsampled}
 \end{table}
 
+\subsection{Les différents classifieurs testés}
 
-\subsection{Les différents embeddings testés}
+Nous avons sélectionné quatre modèles classiques de machine learning, à savoir Random Forest, Support Vector Machine (SVM),  Régression Logistique et Perceptron.
+
+\par Le \textbf{Random Forest} est une forêt d'arbres de décision qui utilisent le bagging pour améliorer la qualité des prédictions. L'algorithme fonctionne par une combinaison des résultats de multiples arbres construits sur des sous-échantillons pris aléatoirement dans le corpus.
+
+\par Le \textbf{SVM}, quant à lui, repose sur l'idée de trouver un hyperplan optimal pour séparer les classes qui garantit une marge maximale. L'algorithme utilise une fonction noyau pour passer transformer les données et ajouter un espace de dimension supplémentaire, ce qui permet de résoudre des problèmes de classification non linéaire tout en utilisant tout de même un classifieur linéaire.
+
+\par La \textbf{Régression Logistique} modélise la probabilité qu'un échantillon appartienne à une classe en utilisant une fonction sigmoïde. Elle nécessite une relation linéaire entre les \textit{features} et la classe.
+
+\par Enfin, le \textbf{Perceptron} est un modèle de réseau de neurones linéaire qui ajuste les poids d'un seul neurone en fonction de l'erreur de prédiction, optimisé via une descente de gradient.
+
+\par Ces quatre modèles ont été selectionnés car complémentaires : ils permettent d'aborder le problème sous différentes angles, avec des approches plus adaptées à la linéarité et d'autres à la non linéarité.
+
+
+
+\subsection{Les différents vecteurs testés}
 Nous avons choisi dans notre étude de comparer les résultats obtenus sur une tâche 
 de classification en utilisant 3 techniques de vectorisation différentes.\\
-\indent La vectorisation \texttt{TF-IDF}\footnote{Implémentée avec la fonction \texttt{tfidfvectorizer} de \texttt{scikit-learn}}(\textit{Term Frequency-Inverse Document Frequency})
-est la méthode la plus "ancienne" que nous présentons. Elle se base sur une mécanique de comptage des mots:
-la fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
+\indent La vectorisation \textbf{\texttt{TF-IDF}}\footnote{Implémentée avec la fonction \texttt{tfidfvectorizer} de \texttt{scikit-learn}}(\textit{Term Frequency-Inverse Document Frequency})
+est la méthode la seule méthode non neuronale que nous présentons, en ce qu'elle se fonde sur des statistiques. La fréquence d'apparition de chaque mot dans un document est divisée par sa fréquence d'apparition dans le corpus,
 permettant de donner plus d'importance aux mots significatifs dans leurs documents d'apparition.\\
-\indent La vectorisation \texttt{Doc2Vec}\footnote{Implémentée à l'aide de la bibliothèque \texttt{gensim}} qui génère des vecteurs de de document plutôt que de mot. Ces vecteurs sont
-l'ouput d'un réseau de neurones et nécessitent donc une phrase d'entrainement. Pour cette étude,
-nous avons choisi de générer des vecteur Doc2Vec à 100 dimensions\footnote{il serait possible de faire plus, mais nous essayions de ne pas saturer nos machines}
+\indent La vectorisation \textbf{\texttt{Doc2Vec}}\footnote{Implémentée à l'aide de la bibliothèque \texttt{gensim}} qui génère un \textit{embedding} pour chaque document. Ces vecteurs sont
+l'ouput d'un réseau de neurones à mémoire distribuée. Pour cette étude,
+nous avons choisi de générer des vecteurs \texttt{Doc2Vec} à 100 dimensions\footnote{Bien que des dimensions plus élevées puissent améliorer la capacité de représentation, nous avons choisi cette configuration pour ne pas saturer nos ressources matérielles.}
 avec une fenêtre glissante de 5 mots et d'ignorer les mots n'apparaissant pas au moins 3 fois.\\
-\indent La vectorisation avec \texttt{BERT} multilingue\footnote{bert-base-multilingual-uncased} qui se base sur les réseaux de neurones mais s'appuie sur une 
-architecture transformer et nécessite également une phase d'entrainement. Contrairement à
-Doc2Vec, elle renvoie des vecteurs de mots, et utilise un mécanisme d'attention lors de
-la génération des vecteurs, lui permettant de prendre en compte l'importance d'un mot en fonction du contexte local dans
-lequel in apparait. Nous avons généré des vecteurs à 768 dimensions (valeur de base).
+\indent La vectorisation avec \textbf{\texttt{BERT}} multilingue\footnote{bert-base-multilingual-uncased} se base sur les réseaux de neurones mais s'appuie sur une 
+architecture transformer caractérisée par ses mécanismes d'attention. Contrairement à
+\texttt{Doc2Vec}, \texttt{BERT} produit des \textit{embeddings} au niveau des tokens, qui peuvent être agrégés pour obtenir un vecteur document. Nous avons généré des vecteurs à 768 dimensions (profondeur de la couche de sortie finale du modèle pré-entrainé).
 
 
 
