@@ -3,64 +3,61 @@
 Comme mentionné en introduction, nous avons testé trois méthodes de vectorisation : TF-IDF, doc2vec et BERT
 Nous avons utilisé ces vecteurs pour entraîner et comparer 4 modèles différents : Régression logistique, SVM, Random Forest et Perceptron.
 
-\subsection{Vecteurs TF-IDF}
-
-Les meilleurs résultats que nous ayons obtenus sont ceux avec un vectorisation tf-idf.
-On peut voir sur la figure~\ref{fig:tfidf_comparison} que nous avons obtenu au mieux : 0.46 en anglais avec un SVM, 0.43 en italien avec une régression linéaire et 0.44 en français avec un SVM.
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{assets/comparaison_metriques_tfidf.png}
-  \caption{Résultats obtenus avec les vecteurs TF-IDF.}
-  \label{fig:tfidf_comparison}
-\end{figure}
-
-\subsection{Vecteurs doc2vec}
-
-Comme on peut le voir sur la figure~\ref{fig:doc2vec_comparison}, avec les vecteurs doc2vec, c'est le SVM qui obtient les meilleurs résultats dans les trois langues.
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{assets/comparaison_metriques_doc2vec.png}
-  \caption{Résultats obtenus avec les vecteurs doc2vec.}
-  \label{fig:doc2vec_comparison}
-\end{figure}
-\subsection{Vecteurs BERT}
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{assets/comparaison_metriques_bert.png}
-  \caption{Résultats obtenus avec les vecteurs BERT.}
-  \label{fig:bert_comparison}
-\end{figure}
-
-La figure~\ref{fig:bert_comparison} montre qu'avec les vecteurs BERT, la régression logistique obtient les meilleurs résultats dans les trois langues.
-
-
-
-
-\subsection{Comparaison des méthodes de vectorisation}
-
-Le tableau \ref{tab:comparaison_vecteurs} montre les résultats obtenus avec les trois méthodes de vectorisation. On peut voir que la méthode TF-IDF est la plus performante dans les trois langues.
 
 \begin{table}[h]
     \centering
-    \begin{tabular}{|c|c|c|c|}
+    \begin{tabular}{|l|l|l|l|l|}
         \hline
-        & TF-IDF & DOC2VEC & BERT \\
+        & Clf & RandomForest & SVM & Perceptron & LR \\
         \hline
-        Français & 0.44 & 0.33 & 0.36 \\
+        Anglais & 0.37 & \textbf{0.47} & 0.41 & 0.46 \\
         \hline
-        Anglais & 0.47 & 0.38 & 0.36 \\
+        Français & 0.34 & \textbf{0.45} & 0.42 & 0.44 \\
         \hline
-        Italien & 0.43 & 0.33 & 0.35 \\
+        Italien & 0.33 & \textbf{0.43} & 0.40 & 0.43 \\
         \hline
     \end{tabular}
-    \caption{Comparison of different models}
+    \caption{F-mesure des classifieurs par langue avec vectorisation \texttt{TF-IDF}}
     \label{tab:comparaison_vecteurs}
 \end{table}
 
-Le meilleur résultat a été obtenu sur l'anglais avec un SVM et des vecteurs TF-IDF, avec un score de 0.47. La figure \ref{fig:tfidf_comparison} montre la matrice de confusion correspondante.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        & Clf & RandomForest & SVM & Perceptron & LR \\
+        \hline
+        Anglais & 0.29 & \textbf{0.39} & 0.22 & 0.31 \\
+        \hline
+        Français & 0.26 & \textbf{0.34} & 0.25 & 0.28 \\
+        \hline
+        Italien & 0.27 & \textbf{0.33} & 0.22 & 0.28 \\
+        \hline
+    \end{tabular}
+    \caption{F-mesure des classifieurs par langue avec vectorisation \texttt{Doc2Vec}}
+    \label{tab:comparaison_vecteurs}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        & Clf & RandomForest & SVM & Perceptron & LR \\
+        \hline
+        Anglais & 0.32 & \textbf{0.32} & 0.22 & 0.36 \\
+        \hline
+        Français & 0.31 & \textbf{0.27} & 0.13 & 0.36 \\
+        \hline
+        Italien & 0.31 & \textbf{0.26} & 0.15 & 0.36 \\
+        \hline
+    \end{tabular}
+    \caption{F-mesure des classifieurs par langue avec vectorisation \texttt{BERT}}
+    \label{tab:comparaison_vecteurs}
+\end{table}
+
 
 \begin{figure}[t]
-  \includegraphics[width=\columnwidth]{"./assets/confusion_matrix_en_tfidf.png"}
-  \caption{Matrice de confusion pour l'anglais avec des vecteurs TF-IDF et un SVM.}
-  \label{fig:tfidf_comparison}
+  \includegraphics[width=\columnwidth]{"./assets/comparaison_vecteur_clf_barplot.png"}
+  \caption{Comparaison des vecteurs et classifieurs.}
+  \label{fig:comparaison_vecteur}
 \end{figure}
