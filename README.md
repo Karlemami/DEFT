@@ -23,6 +23,8 @@ languages:  # Comment out languages you don't want
   - "en"  # English
   - "it"  # Italian
 
+usage : train # train will run a gridsearch to find the best parameters, test will test the models with their best parameters if they exist
+
 models: # Comment out models you don't want
   #- "RFC"          # Random Forest Classifier
   #- "SVM"          # Support Vector Machine
