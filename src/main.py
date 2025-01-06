@@ -19,8 +19,10 @@ def main(config: dict):
         trainer = Trainer(
             config["models"], X_train, X_test, y_train, y_test, labels, language
         )
-        # trainer.get_best_params(save=True)
-        trainer.compare_results(save_results=True, defined=False, save_best=False)
+        if config["usage"] == "train":
+            trainer.get_best_params(save=True)
+        elif config["usage"] == "test":
+            trainer.compare_results(save_results=True, defined=False, save_best=False)
 
 
 if __name__ == "__main__":
@@ -30,6 +32,7 @@ if __name__ == "__main__":
         f"{colors.bold}{colors.green}Train path:{colors.reset} {config['train_path']}"
     )
     print(f"{colors.bold}{colors.green}Test path:{colors.reset} {config['test_path']}")
+    print(f"{colors.bold}{colors.green}Usage:{colors.reset} {config['usage']}")
     print(f"{colors.bold}{colors.green}Languages:{colors.reset} {config['languages']}")
     print(f"{colors.bold}{colors.green}Models:{colors.reset} {config['models']}")
     print(
