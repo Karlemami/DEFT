@@ -7,6 +7,11 @@ git clone git@github.com:Karlemami/DEFT.git && cd DEFT
 make
 ```
 
+To download dataset:
+```sh
+bash data/download_data.sh
+```
+
 ## Configuration
 
 You can update `config.yaml` as follows:
